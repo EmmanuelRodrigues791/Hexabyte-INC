@@ -1,13 +1,19 @@
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         InventorySystem system = new InventorySystem();
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("CartPilot System)");
+        System.out.println("CartPilot System");
         System.out.print("Login as (owner or manager or employee): ");
         String role = scanner.nextLine();
+
+        if (!role.equals("owner") && !role.equals("manager") && !role.equals("employee")) {
+            System.out.println("Invalid role. Exiting.");
+            return;
+        }
 
         while (true) {
             System.out.println("\n----Menu----");
@@ -29,13 +35,20 @@ public class Main {
             switch (choice) {
                 case 1:
                     if (role.equals("owner") || role.equals("manager")) {
+                        System.out.print("Item ID: ");
+                        int id = scanner.nextInt();
+                        scanner.nextLine();
                         System.out.print("Item Name: ");
                         String name = scanner.nextLine();
                         System.out.print("Price: ");
                         double price = scanner.nextDouble();
+                        scanner.nextLine();
                         System.out.print("Quantity: ");
                         int qty = scanner.nextInt();
-                        system.addItem(name, price, qty);
+                        scanner.nextLine();
+                        System.out.print("Item Origin: ");
+                        String origin = scanner.nextLine();
+                        system.addItem(id, name, price, qty, origin);
                     }
                     break;
 
@@ -52,6 +65,7 @@ public class Main {
                         String name = scanner.nextLine();
                         System.out.print("New Price: ");
                         double price = scanner.nextDouble();
+                        scanner.nextLine();
                         system.updatePrice(name, price);
                     }
                     break;
@@ -74,6 +88,8 @@ public class Main {
 
                 case 0:
                     System.out.println("Exiting CartPilot...");
+                    system.close();
+                    scanner.close();
                     return;
             }
         }

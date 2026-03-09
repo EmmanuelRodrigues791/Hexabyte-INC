@@ -1,46 +1,132 @@
+import java.sql.*;
 import java.util.*;
 
 class InventorySystem {
-    private List<Item> items = new ArrayList<>();
-    private List<String> log = new ArrayList<>();
+    private Connection conn;
 
-    public void addItem(String name, double price, int quantity) {
-        items.add(new Item(name, price, quantity));
-        log.add("Added item: " + name);
+    public void close() throws SQLException {
+        conn.close();
+    }
+
+    public InventorySystem() throws SQLException {
+        conn = DriverManager.getConnection(
+                "jdbc:mysql://127.0.0.1:3306/login", "root", "raposisnice"
+        );
+    }
+
+    public void addItem(int id, String name, double price, int quantity, String origin) {
+
+        logToDB("Added item: " + name);
+
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(
+                    "INSERT INTO inventory (idinventory, name, price, quantity, origin) Values (?, ?, ?, ?, ?)"
+            );
+            preparedStatement.setInt(1, id);
+            preparedStatement.setString(2, name);
+            preparedStatement.setDouble(3, price);
+            preparedStatement.setInt(4, quantity);
+            preparedStatement.setString(5, origin);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            System.out.println("Rows inserted: " + rowsAffected);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void removeItem(String name) {
-        items.removeIf(item -> item.getName().equalsIgnoreCase(name));
-        log.add("Removed item: " + name);
+
+        logToDB("Removed item: " + name);
+
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(
+                    "DELETE FROM inventory WHERE name = ?"
+            );
+            preparedStatement.setString(1, name);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void updatePrice(String name, double newPrice) {
-        for (Item item : items) {
-            if (item.getName().equalsIgnoreCase(name)) {
-                item.setPrice(newPrice);
-                log.add("Updated price for: " + name);
-            }
+
+        logToDB("Updated price for: " + name);
+
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(
+                    "UPDATE inventory SET price = ? WHERE name = ?"
+            );
+            preparedStatement.setDouble(1, newPrice);
+            preparedStatement.setString(2, name);
+            preparedStatement.executeUpdate();
+
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
     public void updateQuantity(String name, int newQuantity) {
-        for (Item item : items) {
-            if (item.getName().equalsIgnoreCase(name)) {
-                item.setQuantity(newQuantity);
-                log.add("Updated quantity for: " + name);
-            }
+
+        logToDB("Updated quantity for: " + name);
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE inventory SET quantity = ? WHERE name = ?"
+            );
+            ps.setInt(1, newQuantity);
+            ps.setString(2, name);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
     public void viewInventory() {
-        for (Item item : items) {
-            System.out.println(item);
+        try {
+            ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM inventory");
+            while (rs.next()) {
+                System.out.println(
+                        rs.getInt("idinventory") + " | " +
+                                rs.getString("name") + " | " +
+                                rs.getFloat("price") + " | " +
+                                rs.getInt("quantity") + " | " +
+                                rs.getString("origin")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void logToDB(String entries) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO log (entries) VALUES (?)"
+            );
+            ps.setString(1, entries);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
     public void viewLog() {
-        for (String entry : log) {
-            System.out.println(entry);
+        try {
+            ResultSet rs = conn.createStatement().executeQuery(
+                    "SELECT entries, timestamp FROM log ORDER BY idlog ASC"
+            );
+            while (rs.next()) {
+                System.out.println(rs.getString("timestamp") + " | " + rs.getString("entries"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
