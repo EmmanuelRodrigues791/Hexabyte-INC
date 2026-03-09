@@ -1,0 +1,26 @@
+@startuml
+
+actor Owner
+participant Main
+participant InventorySystem
+database MySQL
+
+Owner -> Main : selects role "owner"
+Main -> Main : validates role
+
+Owner -> Main : selects option 1 (Add Item)
+Main -> Main : reads id, name, price, quantity, origin
+
+Main -> InventorySystem : addItem(id, name, price, quantity, origin)
+
+InventorySystem -> MySQL : INSERT INTO inventory VALUES (?, ?, ?, ?, ?)
+MySQL --> InventorySystem : rowsAffected = 1
+
+InventorySystem -> InventorySystem : logToDB("Added item: " + name)
+InventorySystem -> MySQL : INSERT INTO log (entries) VALUES (?)
+MySQL --> InventorySystem : success
+
+InventorySystem --> Main : "Rows inserted: 1"
+Main --> Owner : prints confirmation
+
+@enduml
