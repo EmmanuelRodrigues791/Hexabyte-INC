@@ -1,0 +1,45 @@
+@startuml
+
+class Main {
+    + main(args: String[]): void
+}
+
+class InventorySystem {
+    - conn: Connection
+    + InventorySystem()
+    + addItem(id: int, name: String, price: double, quantity: int, origin: String): void
+    + removeItem(name: String): void
+    + updatePrice(name: String, newPrice: double): void
+    + updateQuantity(name: String, newQuantity: int): void
+    + viewInventory(): void
+    + viewLog(): void
+    + close(): void
+    - logToDB(entries: String): void
+}
+
+class Item {
+    - id: int
+    - name: String
+    - price: double
+    - quantity: int
+    - origin: String
+    + Item(id: int, name: String, price: double, quantity: int, origin: String)
+    + getId(): int
+    + getName(): String
+    + getPrice(): double
+    + getQuantity(): int
+    + getOrigin(): String
+    + setPrice(price: double): void
+    + setQuantity(quantity: int): void
+}
+
+class "<<database>>\nMySQL" as MySQL {
+    inventory: idinventory, name, price, quantity, origin
+    log: idlog, entries, timestamp
+}
+
+Main --> InventorySystem : uses
+InventorySystem --> MySQL : connects via JDBC
+InventorySystem ..> Item : previously used
+
+@enduml
