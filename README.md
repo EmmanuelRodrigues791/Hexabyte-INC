@@ -59,8 +59,9 @@ Hexabyte/
 ## How to Setup
 
 1. Download/Clone the repository
-2. Set up the MySQL database using the scripts above
-3. Update DB credentials in InventorySystem.java if needed:
+2. Download Workbench from: https://dev.mysql.com/downloads/workbench/
+3. Set up the MySQL database using the scripts above
+4. Update DB credentials in InventorySystem.java if needed:
 
 ```java
 conn = DriverManager.getConnection(
