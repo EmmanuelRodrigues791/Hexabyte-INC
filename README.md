@@ -61,16 +61,16 @@ How to Setup
 1. Download/Clone the repository
 2. Set up the MySQL database using the scripts above
 3. Update DB credentials in InventorySystem.java if needed:
-
+'''
 javaconn = DriverManager.getConnection(
     "jdbc:mysql://127.0.0.1:3306/login", "root", "yourpassword"
 );
-
+'''
 How to Run Via Command Prompt (Terminal)
 
 1. Navigate to the project folder: cd "C:\Users\your user\add necessary directories"
 2. Compile: C:\Users\your user\.jdks\openjdk-25.0.2\bin\javac -cp "lib\mysql-connector-j-9.6.0.jar" -d out src\Main.java src\InventorySystem.java src\Item.java
 3. Run: C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-9.6.0.jar" Main
 
-Authors
+## Authors
 Hexabyte Team — Ontario Tech University, CSCI2040U
