@@ -15,6 +15,11 @@ class InventorySystem {
         );
     }
 
+    // constructor for unit testing with mock objects
+    public InventorySystem(Connection conn) {
+        this.conn = conn;
+    }
+
     // method to add item to database
     public void addItem(int id, String name, double price, int quantity, String origin) {
 

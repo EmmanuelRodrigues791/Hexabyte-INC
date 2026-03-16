@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="mockito-core-5.12.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Downloads/mockito-core-5.12.0.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/byte-buddy-1.14.19.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/byte-buddy-agent-1.14.19.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
