@@ -4,16 +4,18 @@ import java.util.*;
 class InventorySystem {
     private Connection conn;
 
+    // error handling if conn is closed
     public void close() throws SQLException {
         conn.close();
     }
-
+    // open connection to database using constructor
     public InventorySystem() throws SQLException {
         conn = DriverManager.getConnection(
                 "jdbc:mysql://127.0.0.1:3306/login", "root", "raposisnice"
         );
     }
 
+    // method to add item to database
     public void addItem(int id, String name, double price, int quantity, String origin) {
 
         logToDB("Added item: " + name);
@@ -30,13 +32,12 @@ class InventorySystem {
 
             int rowsAffected = preparedStatement.executeUpdate();
 
-            System.out.println("Rows inserted: " + rowsAffected);
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    // method to remove an item from database
     public void removeItem(String name) {
 
         logToDB("Removed item: " + name);

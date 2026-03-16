@@ -7,10 +7,10 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("CartPilot System");
-        System.out.print("Login as (owner or manager or employee): ");
+        System.out.print("Login as (owner or manager): ");
         String role = scanner.nextLine();
 
-        if (!role.equals("owner") && !role.equals("manager") && !role.equals("employee")) {
+        if (!role.equals("owner") && !role.equals("manager")) {
             System.out.println("Invalid role. Exiting.");
             return;
         }
