@@ -56,19 +56,21 @@ Hexabyte/
 └── hexabyte_burndown_chart.png      # Iteration 1 burndown chart  
 ```
 
-How to Run
+How to Setup
 
-1. Clone or download the repository
-2. Open the project in IntelliJ IDEA
-3. Add mysql-connector-j-9.6.0.jar to your project libraries
-4. Set up the MySQL database using the scripts above
-5. Update DB credentials in InventorySystem.java if needed:
+1. Download/Clone the repository
+2. Set up the MySQL database using the scripts above
+3. Update DB credentials in InventorySystem.java if needed:
 
 javaconn = DriverManager.getConnection(
     "jdbc:mysql://127.0.0.1:3306/login", "root", "yourpassword"
 );
 
-6. Run Main.java
+How to Run Via Command Prompt (Terminal)
+
+1. Navigate to the project folder: cd "C:\Users\your user\add necessary directories"
+2. Compile: C:\Users\your user\.jdks\openjdk-25.0.2\bin\javac -cp "lib\mysql-connector-j-9.6.0.jar" -d out src\Main.java src\InventorySystem.java src\Item.java
+3. Run: C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-9.6.0.jar" Main
 
 Authors
 Hexabyte Team — Ontario Tech University, CSCI2040U
