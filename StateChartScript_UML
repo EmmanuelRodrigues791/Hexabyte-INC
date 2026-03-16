@@ -1,0 +1,29 @@
+@startuml
+
+[*] --> Disconnected
+
+Disconnected --> Connected : InventorySystem()\n[DB connection successful]
+Disconnected --> Disconnected : InventorySystem()\n[connection failed]
+
+Connected --> ItemAdded : addItem()
+ItemAdded --> Connected : success / log entry created
+
+Connected --> ItemRemoved : removeItem()
+ItemRemoved --> Connected : success / log entry created
+
+Connected --> PriceUpdated : updatePrice()
+PriceUpdated --> Connected : success / log entry created
+
+Connected --> QuantityUpdated : updateQuantity()
+QuantityUpdated --> Connected : success / log entry created
+
+Connected --> ViewingInventory : viewInventory()
+ViewingInventory --> Connected : results displayed
+
+Connected --> ViewingLog : viewLog()
+ViewingLog --> Connected : entries displayed
+
+Connected --> Disconnected : close()
+Disconnected --> [*]
+
+@enduml
