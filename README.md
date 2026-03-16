@@ -3,11 +3,11 @@ A terminal-based inventory management system built with Java and MySQL for CSCI2
 
 ## Features
 
-Role-based access control (Owner, Manager, Employee)
-Add, remove, and update inventory items
-Persistent storage via MySQL database
-Activity log with timestamps
-View full inventory from database
+- Role-based access control (Owner & Manager)
+- Add, remove, and update inventory items
+- Persistent storage via MySQL database
+- Activity log with timestamps
+- View full inventory from database
 
 ## Database Setup
 Run the following SQL scripts in MySQL Workbench to set up the required tables:
@@ -32,10 +32,10 @@ CREATE TABLE log (
 
 ## Requirements
 
-Java JDK 25+
-MySQL Server 8.0+
-MySQL Connector/J 9.6.0
-IntelliJ IDEA (recommended)
+- Java JDK 25+
+- MySQL Server 8.0+
+- MySQL Connector/J 9.6.0
+- IntelliJ IDEA (recommended)
 
 ## Project Structure
 ```
@@ -56,16 +56,17 @@ Hexabyte/
 └── hexabyte_burndown_chart.png      # Iteration 1 burndown chart  
 ```
 
-How to Setup
+## How to Setup
 
 1. Download/Clone the repository
 2. Set up the MySQL database using the scripts above
 3. Update DB credentials in InventorySystem.java if needed:
-'''
-javaconn = DriverManager.getConnection(
+
+```java
+conn = DriverManager.getConnection(
     "jdbc:mysql://127.0.0.1:3306/login", "root", "yourpassword"
 );
-'''
+```
 How to Run Via Command Prompt (Terminal)
 
 1. Navigate to the project folder: cd "C:\Users\your user\add necessary directories"
