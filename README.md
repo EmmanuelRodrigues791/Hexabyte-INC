@@ -167,7 +167,7 @@ C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-
 | Update Price | ✅ | ✅ | ❌ |
 | Update Quantity | ✅ | ✅ | ✅ |
 | View Inventory | ✅ | ✅ | ✅ |
-| View Log | ✅ | ✅ | ✅ |
+| View Log | ✅ | ✅ | ❌ |
 
 ---
 
