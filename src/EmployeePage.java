@@ -7,10 +7,10 @@ public class EmployeePage extends JFrame {
 
     private InventorySystem system;
     private DefaultTableModel tableModel;
+    private JTable table;
 
     public EmployeePage(InventorySystem system) {
         this.system = system;
-        system.initializeDatabases();
 
         setTitle("CartPilot - Employee Dashboard");
         setSize(700, 500);
@@ -35,7 +35,7 @@ public class EmployeePage extends JFrame {
         tableModel = new DefaultTableModel(columns, 0) {
             public boolean isCellEditable(int row, int col) { return false; }
         };
-        JTable table = new JTable(tableModel);
+        table = new JTable(tableModel);
         table.setFont(new Font("Arial", Font.PLAIN, 13));
         table.setRowHeight(25);
         table.setBackground(new Color(45, 45, 45));
@@ -89,20 +89,12 @@ public class EmployeePage extends JFrame {
             java.sql.ResultSet rs = conn.createStatement()
                     .executeQuery("SELECT * FROM inventory");
             while (rs.next()) {
-                Item item = new Item(
-                    rs.getInt("idinventory"),
-                    rs.getString("name"),
-                    rs.getDouble("price"),
-                    rs.getInt("quantity"),
-                    rs.getString("origin")
-                );
-
                 tableModel.addRow(new Object[]{
-                    item.getId(),
-                    item,
-                    item.getPrice(),
-                    item.getQuantity(),
-                    item.getOrigin()
+                        rs.getInt("idinventory"),
+                        rs.getString("name"),
+                        rs.getFloat("price"),
+                        rs.getInt("quantity"),
+                        rs.getString("origin")
                 });
             }
         } catch (SQLException e) {
@@ -111,18 +103,21 @@ public class EmployeePage extends JFrame {
     }
 
     private void updateQuantity() {
-        String name = JOptionPane.showInputDialog(this, "Enter item name:");
-        if (name != null) {
-            String qtyStr = JOptionPane.showInputDialog(this, "Enter new quantity:");
-            if (qtyStr != null) {
-                try {
-                    system.updateQuantity(name, Integer.parseInt(qtyStr));
-                    loadInventory();
-                    JOptionPane.showMessageDialog(this, "Quantity updated!");
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Invalid quantity entered.");
-                }
+        try {
+            String name = (String) table.getValueAt(table.getSelectedRow(), 1);
+            JTextField newQuantity = new JTextField();
+            Object[] fields = {
+                    "New Quantity for " + name + ":", newQuantity
+            };
+            int result = JOptionPane.showConfirmDialog(this, fields, "Update Quantity", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.NO_OPTION) { return; }
+            if (result == JOptionPane.YES_OPTION){
+                system.updateQuantity(name, Integer.parseInt(newQuantity.getText()));
+                JOptionPane.showMessageDialog(null, "New quantity for " + name + " updated to " + Integer.parseInt(newQuantity.getText()));
+                loadInventory();
             }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
         }
     }
 }

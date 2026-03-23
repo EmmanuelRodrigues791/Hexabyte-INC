@@ -194,7 +194,7 @@ class InventorySystem {
     }
 
     // Add user to database
-    public void addUser(String username, String password, String role, String user) {
+    public void addUser(String username, String password, String role) {
 
         logToDB("Login created for " + username + " (" + role + ")");
 
@@ -214,7 +214,7 @@ class InventorySystem {
     }
 
     // Remove user from database
-    public void removeUser(String username, String user, String u) {
+    public void removeUser(String username) {
 
         logToDB("Removed user: " + username);
 
@@ -249,5 +249,23 @@ class InventorySystem {
             e.printStackTrace();
         }
         return role;
+    }
+
+    // If login match return role
+    public String login(String username, String password) {
+        try {
+            ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM users");
+            while (rs.next()) {
+                if (rs.getString("username").equals(username)){
+                    if (rs.getString("password").equals(password)){
+                        return rs.getString("role");
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

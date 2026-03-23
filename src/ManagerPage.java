@@ -13,7 +13,6 @@ public class ManagerPage extends JFrame {
     public ManagerPage(InventorySystem system, String role) {
         this.system = system;
         this.role = role;
-        system.initializeDatabases();
 
         setTitle("CartPilot - " + role.substring(0,1).toUpperCase() + role.substring(1) + " Dashboard");
         setSize(1000, 800);
