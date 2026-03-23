@@ -20,6 +20,8 @@ class InventorySystem {
         this.conn = conn;
     }
 
+    public Connection getConnection() {return conn;}
+
     // method to add item to database
     public void addItem(int id, String name, double price, int quantity, String origin) {
 
