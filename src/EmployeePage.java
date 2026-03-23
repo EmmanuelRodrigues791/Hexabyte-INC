@@ -10,6 +10,7 @@ public class EmployeePage extends JFrame {
 
     public EmployeePage(InventorySystem system) {
         this.system = system;
+        system.initializeDatabases();
 
         setTitle("CartPilot - Employee Dashboard");
         setSize(700, 500);
@@ -88,12 +89,20 @@ public class EmployeePage extends JFrame {
             java.sql.ResultSet rs = conn.createStatement()
                     .executeQuery("SELECT * FROM inventory");
             while (rs.next()) {
+                Item item = new Item(
+                    rs.getInt("idinventory"),
+                    rs.getString("name"),
+                    rs.getDouble("price"),
+                    rs.getInt("quantity"),
+                    rs.getString("origin")
+                );
+
                 tableModel.addRow(new Object[]{
-                        rs.getInt("idinventory"),
-                        rs.getString("name"),
-                        rs.getFloat("price"),
-                        rs.getInt("quantity"),
-                        rs.getString("origin")
+                    item.getId(),
+                    item,
+                    item.getPrice(),
+                    item.getQuantity(),
+                    item.getOrigin()
                 });
             }
         } catch (SQLException e) {

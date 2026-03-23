@@ -8,10 +8,12 @@ public class ManagerPage extends JFrame {
     private InventorySystem system;
     private String role;
     private DefaultTableModel tableModel;
+    private JTable table;
 
     public ManagerPage(InventorySystem system, String role) {
         this.system = system;
         this.role = role;
+        system.initializeDatabases();
 
         setTitle("CartPilot - " + role.substring(0,1).toUpperCase() + role.substring(1) + " Dashboard");
         setSize(1000, 800);
@@ -35,7 +37,7 @@ public class ManagerPage extends JFrame {
         // Table
         String[] columns = {"ID", "Name", "Price", "Quantity", "Origin"};
         tableModel = new DefaultTableModel(columns, 0);
-        JTable table = new JTable(tableModel);
+        table = new JTable(tableModel);
         table.setFont(new Font("Arial", Font.PLAIN, 13));
         table.setRowHeight(25);
         table.setBackground(new Color(45, 45, 45));
@@ -153,35 +155,61 @@ public class ManagerPage extends JFrame {
     }
 
     private void removeItem() {
-        String name = JOptionPane.showInputDialog(this, "Enter item name to remove:");
-        if (name != null && !name.isEmpty()) {
-            system.removeItem(name);
-            loadInventory();
-            JOptionPane.showMessageDialog(this, "Item removed successfully!");
+        try {    
+            String name = (String) table.getValueAt(table.getSelectedRow(), 1);
+            JPanel pane = new JPanel();
+            pane.add(new JLabel("Are you sure you want to delete " + name + "?"));
+            int result = JOptionPane.showConfirmDialog(
+                null,
+                pane,
+                "Confirmation",
+                JOptionPane.YES_NO_OPTION
+            );
+            if (result == JOptionPane.NO_OPTION) { return; }
+            if (result == JOptionPane.YES_OPTION){
+                system.removeItem(name);
+                loadInventory();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Please select the row you would like to remove.");
         }
     }
 
     private void updatePrice() {
-        String name = JOptionPane.showInputDialog(this, "Enter item name:");
-        if (name != null) {
-            String priceStr = JOptionPane.showInputDialog(this, "Enter new price:");
-            if (priceStr != null) {
-                system.updatePrice(name, Double.parseDouble(priceStr));
+        try {
+            String name = (String) table.getValueAt(table.getSelectedRow(), 1);
+            JTextField newPrice = new JTextField();
+            Object[] fields = {
+                    "New Price for " + name + ":", newPrice
+            };
+            int result = JOptionPane.showConfirmDialog(this, fields, "Update Price", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.NO_OPTION) { return; }
+            if (result == JOptionPane.YES_OPTION){
+                system.updatePrice(name, Double.parseDouble(newPrice.getText()));
+                JOptionPane.showMessageDialog(null, "New price for " + name + " updated to " + Double.parseDouble(newPrice.getText()));
                 loadInventory();
-                JOptionPane.showMessageDialog(this, "Price updated!");
             }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
         }
     }
 
     private void updateQuantity() {
-        String name = JOptionPane.showInputDialog(this, "Enter item name:");
-        if (name != null) {
-            String qtyStr = JOptionPane.showInputDialog(this, "Enter new quantity:");
-            if (qtyStr != null) {
-                system.updateQuantity(name, Integer.parseInt(qtyStr));
+        try {
+            String name = (String) table.getValueAt(table.getSelectedRow(), 1);
+            JTextField newQuantity = new JTextField();
+            Object[] fields = {
+                    "New Quantity for " + name + ":", newQuantity
+            };
+            int result = JOptionPane.showConfirmDialog(this, fields, "Update Quantity", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.NO_OPTION) { return; }
+            if (result == JOptionPane.YES_OPTION){
+                system.updateQuantity(name, Integer.parseInt(newQuantity.getText()));
+                JOptionPane.showMessageDialog(null, "New quantity for " + name + " updated to " + Integer.parseInt(newQuantity.getText()));
                 loadInventory();
-                JOptionPane.showMessageDialog(this, "Quantity updated!");
             }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
         }
     }
 
