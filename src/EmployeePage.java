@@ -112,9 +112,14 @@ public class EmployeePage extends JFrame {
             int result = JOptionPane.showConfirmDialog(this, fields, "Update Quantity", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.NO_OPTION) { return; }
             if (result == JOptionPane.YES_OPTION){
-                system.updateQuantity(name, Integer.parseInt(newQuantity.getText()));
-                JOptionPane.showMessageDialog(null, "New quantity for " + name + " updated to " + Integer.parseInt(newQuantity.getText()));
-                loadInventory();
+                if (Integer.parseInt(newQuantity.getText()) >= 0){
+                    system.updateQuantity(name, Integer.parseInt(newQuantity.getText()));
+                    JOptionPane.showMessageDialog(null, "New quantity for " + name + " updated to " + Integer.parseInt(newQuantity.getText()));
+                    loadInventory();
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Quantity cannot be less than 0.0");
+                }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
