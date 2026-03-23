@@ -1,4 +1,4 @@
-# CartPilot — Inventory Management System
+# CartPilot — Inventory Management 
 
 A Java Swing desktop inventory management system built with Java and MySQL for CSCI2040U at Ontario Tech University.
 
