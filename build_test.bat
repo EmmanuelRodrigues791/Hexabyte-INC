@@ -25,3 +25,10 @@ echo [2/3] Tests compiled!
 echo [3/3] Running tests...
 echo ===========================
 %JAVA%\java -Dnet.bytebuddy.experimental=true -javaagent:%AGENT% -cp "%STANDALONE%;%OUT%;%TEST_OUT%;%LIB%;%TEST_LIBS%" org.junit.platform.console.ConsoleLauncher --select-class=ItemTest --select-class=InventorySystemTest
+
+echo.
+echo [TDD] Compiling Red Test - RealTimeUpdateTest...
+%JAVA%\javac -cp "%OUT%;%LIB%;%TEST_LIBS%" -d %TEST_OUT% test\RealTimeUpdateTest_TDD.java
+if %ERRORLEVEL% NEQ 0 (
+    echo [TDD] RED - InventoryUpdateListener not built yet - this is intentional TDD
+)
