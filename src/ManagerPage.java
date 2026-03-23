@@ -86,6 +86,79 @@ public class ManagerPage extends JFrame {
         });
 
         loadInventory();
+
+        JMenuBar menubar = new JMenuBar();
+        JMenu menu = new JMenu("settings");
+        JMenuItem addUser = new JMenuItem("Add New User");
+        JMenuItem removeUser = new JMenuItem("Remove User");
+        menu.add(addUser);
+        menu.add(removeUser);
+        menubar.add(menu);
+
+        this.setJMenuBar(menubar);
+
+        // Pop up to add new user to database, Managers can only add employees
+        addUser.addActionListener(e -> {
+            JPanel addUserPane = new JPanel();
+            addUserPane.setLayout(new BoxLayout(addUserPane, BoxLayout.Y_AXIS));
+
+            JPanel usernamePane = new JPanel();
+            usernamePane.add(new JLabel("Username: "));
+            JTextField usernameInput = new JTextField(15);
+            usernamePane.add(usernameInput);
+
+            JPanel passwordPane = new JPanel();
+            passwordPane.add(new JLabel("Password: "));
+            JPasswordField passwordInput = new JPasswordField(15);
+            passwordPane.add(passwordInput);
+
+            JPanel rolePane = new JPanel();
+            rolePane.add(new JLabel("Role: "));
+            String [] roles = new String[] {"Employee", "Manager"};
+            JComboBox<String> roleInput = new JComboBox<>(roles);
+            rolePane.add(roleInput);
+
+            addUserPane.add(usernamePane);
+            addUserPane.add(passwordPane);
+            addUserPane.add(rolePane);
+
+            int result = JOptionPane.showConfirmDialog(
+                null,
+                addUserPane,
+                "create new user",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (result == JOptionPane.CANCEL_OPTION) {return;}
+                    
+            if (result == JOptionPane.OK_OPTION){
+                char[] passChar = passwordInput.getPassword();
+                String addPass = new String(passChar);
+                system.addUser(usernameInput.getText(), addPass, roleInput.getSelectedItem().toString());
+            }   
+        });
+
+        // Pop up to remove users from database with role awareness
+        removeUser.addActionListener(e -> {
+            JPanel removePane = new JPanel();
+            removePane.add(new JLabel("Username: "));
+            JTextField userRemove = new JTextField(15);
+            removePane.add(userRemove);
+                    
+            int result = JOptionPane.showConfirmDialog(
+            null,
+            removePane,
+            "Remove user",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (result == JOptionPane.CANCEL_OPTION){return;}
+            if (result == JOptionPane.OK_OPTION){
+                system.removeUser(userRemove.getText());
+            }
+        });
     }
 
     private JButton createButton(String text, Color color) {

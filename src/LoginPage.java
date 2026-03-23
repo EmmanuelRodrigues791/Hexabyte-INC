@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class LoginPage extends JFrame {
 
@@ -40,6 +42,7 @@ public class LoginPage extends JFrame {
             JOptionPane.showMessageDialog(this,
                     "Database connection failed!\n" + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
         }
         setTitle("CartPilot - Login");
         setSize(600, 500);
@@ -126,6 +129,9 @@ public class LoginPage extends JFrame {
             }
         });
 
+        // Hit enter to login
+        getRootPane().setDefaultButton(loginBtn);
+
         // Close button
         JButton closeBtn = new JButton("Exit");
         closeBtn.setFont(new Font("Arial", Font.BOLD, 14));
@@ -137,7 +143,7 @@ public class LoginPage extends JFrame {
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
         panel.add(closeBtn, gbc);
 
-// Close action
+        // Close action
         closeBtn.addActionListener(e -> System.exit(0));
 
         add(panel);
