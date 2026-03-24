@@ -186,52 +186,13 @@ public class ManagerPage extends JFrame {
                     }
                 }
                 else if (e.getKeyChar() == '\b'){
-                    try {
-                        int result = JOptionPane.showConfirmDialog(
-                            null,
-                            "Are you sure you want to delete " + ((String) table.getValueAt(table.getSelectedRow(), 1)) + "?",
-                            "Confirmation",
-                            JOptionPane.YES_NO_OPTION
-                        );
-                        if (result == JOptionPane.NO_OPTION) {return;}
-                        if (result == JOptionPane.YES_OPTION) {
-                            system.removeItem((String) table.getValueAt(table.getSelectedRow(), 1));
-                            JOptionPane.showMessageDialog(null, "Succesfully removed " + (String) table.getValueAt(table.getSelectedRow(), 1));
-                            loadInventory();
-                        }
-                    } catch (Exception er) {
-                        JOptionPane.showMessageDialog(null, "Please select the row you would like to remove.");
-                    }
+                    removeBtn.doClick();
                 }
                 else if (e.getKeyChar() == 'p') {
-                    try {
-                        JTextField newPrice = new JTextField();
-                        Object[] fields = new Object[] {
-                            new JLabel("New price:"), newPrice
-                        };
-                        int result = JOptionPane.showConfirmDialog(null, fields, "Update price", JOptionPane.OK_CANCEL_OPTION);
-                        if (result == JOptionPane.CANCEL_OPTION) {return;}
-                        if (result == JOptionPane.OK_OPTION) {
-                            if (Double.parseDouble(newPrice.getText()) >= 0.0){
-                                system.updatePrice((String) table.getValueAt(table.getSelectedRow(), 1), Double.parseDouble(newPrice.getText()));
-                                loadInventory();
-                            }
-                            else {
-                                JOptionPane.showMessageDialog(null, "Price must greater than 0.0");
-                            }
-                        }
-                    } catch (NumberFormatException nfe) {
-                        JOptionPane.showMessageDialog(null, "Error: Please enter a valid price.");
-                    } catch (Exception er) {
-                        JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
-                    }
+                    updatePriceBtn.doClick();
                 }
                 else if (e.getKeyChar() == 'q') {
-                    try {
-                        
-                    } catch (Exception er) {
-                        JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
-                    }
+                    updateQtyBtn.doClick();
                 }
             }
         });
@@ -342,7 +303,10 @@ public class ManagerPage extends JFrame {
                     JOptionPane.showMessageDialog(null, "Price cannot be less than 0.0");
                 }
             }
-        } catch (Exception e) {
+        } catch (NumberFormatException nfe){
+            JOptionPane.showMessageDialog(null, "Error: Please enter a valid price.");
+        }
+        catch (Exception er) {
             JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
         }
     }
@@ -366,7 +330,11 @@ public class ManagerPage extends JFrame {
                     JOptionPane.showMessageDialog(null, "Quantity cannot be less than 0.0");
                 }
             }
-        } catch (Exception e) {
+        } 
+        catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(null, "Error: Please enter a valid quantity.");
+        }
+        catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
         }
     }

@@ -92,6 +92,9 @@ public class EmployeePage extends JFrame {
                         JOptionPane.showMessageDialog(null, "Please select a row.");
                     }
                 }
+                else if (e.getKeyChar() == 'q'){
+                    updateQtyBtn.doClick();
+                }
             }
         });
     }
@@ -146,7 +149,11 @@ public class EmployeePage extends JFrame {
                     JOptionPane.showMessageDialog(null, "Quantity cannot be less than 0.0");
                 }
             }
-        } catch (Exception e) {
+        } 
+        catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(null, "Error: Please enter a valid quantity.");
+        }
+        catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
         }
     }
