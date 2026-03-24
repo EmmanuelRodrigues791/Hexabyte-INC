@@ -2,6 +2,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class ManagerPage extends JFrame {
 
@@ -35,7 +37,9 @@ public class ManagerPage extends JFrame {
 
         // Table
         String[] columns = {"ID", "Name", "Price", "Quantity", "Origin"};
-        tableModel = new DefaultTableModel(columns, 0);
+        tableModel = new DefaultTableModel(columns, 0) {
+            public boolean isCellEditable(int row, int column) {return false;}
+        };
         table = new JTable(tableModel);
         table.setFont(new Font("Arial", Font.PLAIN, 13));
         table.setRowHeight(25);
@@ -45,6 +49,7 @@ public class ManagerPage extends JFrame {
         table.getTableHeader().setBackground(new Color(100, 180, 255));
         table.getTableHeader().setForeground(Color.WHITE);
         table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(780, 300));
         mainPanel.add(scrollPane, BorderLayout.CENTER);
@@ -157,6 +162,77 @@ public class ManagerPage extends JFrame {
             if (result == JOptionPane.CANCEL_OPTION){return;}
             if (result == JOptionPane.OK_OPTION){
                 system.removeUser(userRemove.getText());
+            }
+        });
+
+        table.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == '='){
+                    try {
+                        system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) + 1);
+                        loadInventory();
+                    } catch (Exception er) {
+                        JOptionPane.showMessageDialog(null, "Please select a row.");
+                    }
+                }
+                else if (e.getKeyChar() == '-'){
+                    try {
+                        if ((int) table.getValueAt(table.getSelectedRow(), 3) - 1 >= 0){
+                            system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) - 1);
+                            loadInventory();
+                        }
+                    } catch (Exception er) {
+                        JOptionPane.showMessageDialog(null, "Please select a row.");
+                    }
+                }
+                else if (e.getKeyChar() == '\b'){
+                    try {
+                        int result = JOptionPane.showConfirmDialog(
+                            null,
+                            "Are you sure you want to delete " + ((String) table.getValueAt(table.getSelectedRow(), 1)) + "?",
+                            "Confirmation",
+                            JOptionPane.YES_NO_OPTION
+                        );
+                        if (result == JOptionPane.NO_OPTION) {return;}
+                        if (result == JOptionPane.YES_OPTION) {
+                            system.removeItem((String) table.getValueAt(table.getSelectedRow(), 1));
+                            JOptionPane.showMessageDialog(null, "Succesfully removed " + (String) table.getValueAt(table.getSelectedRow(), 1));
+                            loadInventory();
+                        }
+                    } catch (Exception er) {
+                        JOptionPane.showMessageDialog(null, "Please select the row you would like to remove.");
+                    }
+                }
+                else if (e.getKeyChar() == 'p') {
+                    try {
+                        JTextField newPrice = new JTextField();
+                        Object[] fields = new Object[] {
+                            new JLabel("New price:"), newPrice
+                        };
+                        int result = JOptionPane.showConfirmDialog(null, fields, "Update price", JOptionPane.OK_CANCEL_OPTION);
+                        if (result == JOptionPane.CANCEL_OPTION) {return;}
+                        if (result == JOptionPane.OK_OPTION) {
+                            if (Double.parseDouble(newPrice.getText()) >= 0.0){
+                                system.updatePrice((String) table.getValueAt(table.getSelectedRow(), 1), Double.parseDouble(newPrice.getText()));
+                                loadInventory();
+                            }
+                            else {
+                                JOptionPane.showMessageDialog(null, "Price must greater than 0.0");
+                            }
+                        }
+                    } catch (NumberFormatException nfe) {
+                        JOptionPane.showMessageDialog(null, "Error: Please enter a valid price.");
+                    } catch (Exception er) {
+                        JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
+                    }
+                }
+                else if (e.getKeyChar() == 'q') {
+                    try {
+                        
+                    } catch (Exception er) {
+                        JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
+                    }
+                }
             }
         });
     }
@@ -305,7 +381,7 @@ public class ManagerPage extends JFrame {
         try {
             java.sql.Connection conn = system.getConnection();
             java.sql.ResultSet rs = conn.createStatement()
-                    .executeQuery("SELECT entries, timestamp FROM log ORDER BY idlog ASC");
+                    .executeQuery("SELECT entries, timestamp FROM log ORDER BY idlog DESC");
             StringBuilder sb = new StringBuilder();
             while (rs.next()) {
                 sb.append(rs.getString("timestamp"))

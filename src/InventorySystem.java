@@ -11,7 +11,7 @@ class InventorySystem {
     // open connection to database using constructor
     public InventorySystem() throws SQLException {
         conn = DriverManager.getConnection(
-                "jdbc:mysql://127.0.0.1:3306/login", "root", "raposisnice"
+                "jdbc:mysql://127.0.0.1:3306/login", "root", "abc"
         );
     }
 
@@ -128,7 +128,7 @@ class InventorySystem {
     public void viewLog() {
         try {
             ResultSet rs = conn.createStatement().executeQuery(
-                    "SELECT entries, timestamp FROM log ORDER BY idlog ASC"
+                    "SELECT entries, timestamp FROM log ORDER BY idlog DESC"
             );
             while (rs.next()) {
                 System.out.println(rs.getString("timestamp") + " | " + rs.getString("entries"));

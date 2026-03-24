@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class LoginPage extends JFrame {
 

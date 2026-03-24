@@ -2,6 +2,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class EmployeePage extends JFrame {
 
@@ -69,6 +71,29 @@ public class EmployeePage extends JFrame {
         });
 
         loadInventory();
+
+        table.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == '='){
+                    try {
+                        system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) + 1);
+                        loadInventory();
+                    } catch (Exception er) {
+                        JOptionPane.showMessageDialog(null, "Please select a row.");
+                    }
+                }
+                else if (e.getKeyChar() == '-'){
+                    try {
+                        if ((int) table.getValueAt(table.getSelectedRow(), 3) - 1 >= 0){
+                            system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) - 1);
+                            loadInventory();
+                        }
+                    } catch (Exception er) {
+                        JOptionPane.showMessageDialog(null, "Please select a row.");
+                    }
+                }
+            }
+        });
     }
 
     private JButton createButton(String text, Color color) {
