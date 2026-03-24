@@ -11,7 +11,7 @@ class InventorySystem {
     // open connection to database using constructor
     public InventorySystem() throws SQLException {
         conn = DriverManager.getConnection(
-                "jdbc:mysql://127.0.0.1:3306/login", "root", "abc"
+                "jdbc:mysql://127.0.0.1:3306/login", "root", "raposisnice"
         );
     }
 
