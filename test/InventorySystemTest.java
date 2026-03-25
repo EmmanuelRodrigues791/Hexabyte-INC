@@ -27,25 +27,25 @@ public class InventorySystemTest {
 
     @Test
     public void testAddItemCallsInsert() throws Exception {
-        system.addItem(1, "Milk", 5.99, 50, "Nelson");
+        system.addItem(1, "Milk", 5.99, 50, "Nelson", "");
         verify(mockPs, times(2)).executeUpdate(); // once for inventory, once for log
     }
 
     @Test
     public void testRemoveItemCallsDelete() throws Exception {
-        system.removeItem("Milk");
+        system.removeItem("Milk", "");
         verify(mockConn, atLeastOnce()).prepareStatement(contains("DELETE"));
     }
 
     @Test
     public void testUpdatePriceCallsUpdate() throws Exception {
-        system.updatePrice("Milk", 12.99);
+        system.updatePrice("Milk", 12.99, "");
         verify(mockConn, atLeastOnce()).prepareStatement(contains("UPDATE inventory SET price"));
     }
 
     @Test
     public void testUpdateQuantityCallsUpdate() throws Exception {
-        system.updateQuantity("Milk", 100);
+        system.updateQuantity("Milk", 100, "");
         verify(mockConn, atLeastOnce()).prepareStatement(contains("UPDATE inventory SET quantity"));
     }
 

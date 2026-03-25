@@ -10,12 +10,14 @@ public class EmployeePage extends JFrame {
     private InventorySystem system;
     private DefaultTableModel tableModel;
     private JTable table;
+    private String user;
 
-    public EmployeePage(InventorySystem system) {
+    public EmployeePage(InventorySystem system, String user) {
         this.system = system;
+        this.user = user;
 
         setTitle("CartPilot - Employee Dashboard");
-        setSize(700, 500);
+        setSize(1100, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -76,7 +78,7 @@ public class EmployeePage extends JFrame {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == '='){
                     try {
-                        system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) + 1);
+                        system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) + 1, user);
                         loadInventory();
                     } catch (Exception er) {
                         JOptionPane.showMessageDialog(null, "Please select a row.");
@@ -85,7 +87,7 @@ public class EmployeePage extends JFrame {
                 else if (e.getKeyChar() == '-'){
                     try {
                         if ((int) table.getValueAt(table.getSelectedRow(), 3) - 1 >= 0){
-                            system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) - 1);
+                            system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) - 1, user);
                             loadInventory();
                         }
                     } catch (Exception er) {
@@ -141,7 +143,7 @@ public class EmployeePage extends JFrame {
             if (result == JOptionPane.NO_OPTION) { return; }
             if (result == JOptionPane.YES_OPTION){
                 if (Integer.parseInt(newQuantity.getText()) >= 0){
-                    system.updateQuantity(name, Integer.parseInt(newQuantity.getText()));
+                    system.updateQuantity(name, Integer.parseInt(newQuantity.getText()), user);
                     JOptionPane.showMessageDialog(null, "New quantity for " + name + " updated to " + Integer.parseInt(newQuantity.getText()));
                     loadInventory();
                 }

@@ -1,4 +1,5 @@
 import javax.swing.*;
+
 import java.awt.*;
 import java.sql.SQLException;
 
@@ -33,7 +34,7 @@ public class LoginPage extends JFrame {
                 if (result == JOptionPane.CANCEL_OPTION) {System.exit(0);}
                 if (result == JOptionPane.OK_OPTION) {
                     char[] passchar = passField.getPassword();
-                    system.addUser(idField.getText(), new String(passchar), "Owner");
+                    system.addUser(idField.getText(), new String(passchar), "Owner", "System");
                 }
             }
         } catch (Exception e) {
@@ -43,7 +44,7 @@ public class LoginPage extends JFrame {
                     System.exit(0);
         }
         setTitle("CartPilot - Login");
-        setSize(600, 500);
+        setSize(800, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -113,11 +114,11 @@ public class LoginPage extends JFrame {
                 }
                 else if (role.toLowerCase().equals("owner") || role.toLowerCase().equals("manager")){
                     dispose();
-                    new ManagerPage(system, role).setVisible(true);
+                    new ManagerPage(system, role, user).setVisible(true);
                 }
                 else {
                     dispose();
-                    new EmployeePage(system).setVisible(true);
+                    new EmployeePage(system, user).setVisible(true);
                 }
                 
             } catch (SQLException ex) {

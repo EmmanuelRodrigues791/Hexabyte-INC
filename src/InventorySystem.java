@@ -23,9 +23,9 @@ class InventorySystem {
     public Connection getConnection() {return conn;}
 
     // method to add item to database
-    public void addItem(int id, String name, double price, int quantity, String origin) {
+    public void addItem(int id, String name, double price, int quantity, String origin, String user) {
 
-        logToDB("Added item: " + name);
+        logToDB(user + " Added item: " + name);
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
@@ -45,9 +45,9 @@ class InventorySystem {
     }
 
     // method to remove an item from database
-    public void removeItem(String name) {
+    public void removeItem(String name, String user) {
 
-        logToDB("Removed item: " + name);
+        logToDB(user + " Removed item: " + name);
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
@@ -60,9 +60,9 @@ class InventorySystem {
         }
     }
 
-    public void updatePrice(String name, double newPrice) {
+    public void updatePrice(String name, double newPrice, String user) {
 
-        logToDB("Updated price for: " + name);
+        logToDB(user + " Updated price for: " + name);
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
@@ -78,9 +78,9 @@ class InventorySystem {
         }
     }
 
-    public void updateQuantity(String name, int newQuantity) {
+    public void updateQuantity(String name, int newQuantity, String user) {
 
-        logToDB("Updated quantity for: " + name);
+        logToDB(user + " Updated quantity for: " + name);
 
         try {
             PreparedStatement ps = conn.prepareStatement(
@@ -194,9 +194,9 @@ class InventorySystem {
     }
 
     // Add user to database
-    public void addUser(String username, String password, String role) {
+    public void addUser(String username, String password, String role, String user) {
 
-        logToDB("Login created for " + username + " (" + role + ")");
+        logToDB(user + " created login for " + username + " (" + role + ")");
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
@@ -214,9 +214,9 @@ class InventorySystem {
     }
 
     // Remove user from database
-    public void removeUser(String username) {
+    public void removeUser(String username, String user) {
 
-        logToDB("Removed user: " + username);
+        logToDB(user + " Removed user: " + username);
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
@@ -267,5 +267,21 @@ class InventorySystem {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean loginExist(String username){
+        try {
+            String sql = "SELECT 1 FROM users WHERE username = ? LIMIT 1";
+            
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+
+            ResultSet rs = stmt.executeQuery();
+
+            return rs.next();
+
+        } catch (SQLException e) {
+        }
+        return false;
     }
 }

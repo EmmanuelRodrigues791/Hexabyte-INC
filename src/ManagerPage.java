@@ -9,15 +9,17 @@ public class ManagerPage extends JFrame {
 
     private InventorySystem system;
     private String role;
+    private String user;
     private DefaultTableModel tableModel;
     private JTable table;
 
-    public ManagerPage(InventorySystem system, String role) {
+    public ManagerPage(InventorySystem system, String role, String user) {
         this.system = system;
         this.role = role;
+        this.user = user;
 
         setTitle("CartPilot - " + role.substring(0,1).toUpperCase() + role.substring(1) + " Dashboard");
-        setSize(1000, 800);
+        setSize(1100, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -140,7 +142,9 @@ public class ManagerPage extends JFrame {
             if (result == JOptionPane.OK_OPTION){
                 char[] passChar = passwordInput.getPassword();
                 String addPass = new String(passChar);
-                system.addUser(usernameInput.getText(), addPass, roleInput.getSelectedItem().toString());
+                String roleToAdd = roleInput.getSelectedItem().toString();
+                JOptionPane.showMessageDialog(null, "Login created for: " + usernameInput.getText() + " (" + roleToAdd + ")");
+                system.addUser(usernameInput.getText(), addPass, roleToAdd, user);
             }   
         });
 
@@ -161,7 +165,12 @@ public class ManagerPage extends JFrame {
 
             if (result == JOptionPane.CANCEL_OPTION){return;}
             if (result == JOptionPane.OK_OPTION){
-                system.removeUser(userRemove.getText());
+                if (system.loginExist(userRemove.getText())){
+                    system.removeUser(userRemove.getText(), user);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Login doesn't exist.");
+                }
             }
         });
 
@@ -169,7 +178,7 @@ public class ManagerPage extends JFrame {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == '='){
                     try {
-                        system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) + 1);
+                        system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) + 1, user);
                         loadInventory();
                     } catch (Exception er) {
                         JOptionPane.showMessageDialog(null, "Please select a row.");
@@ -178,7 +187,7 @@ public class ManagerPage extends JFrame {
                 else if (e.getKeyChar() == '-'){
                     try {
                         if ((int) table.getValueAt(table.getSelectedRow(), 3) - 1 >= 0){
-                            system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) - 1);
+                            system.updateQuantity( (String) table.getValueAt(table.getSelectedRow(), 1), (int) table.getValueAt(table.getSelectedRow(), 3) - 1, user);
                             loadInventory();
                         }
                     } catch (Exception er) {
@@ -253,7 +262,8 @@ public class ManagerPage extends JFrame {
                         nameField.getText(),
                         Double.parseDouble(priceField.getText()),
                         Integer.parseInt(qtyField.getText()),
-                        originField.getText()
+                        originField.getText(),
+                        user
                 );
                 loadInventory();
                 JOptionPane.showMessageDialog(this, "Item added successfully!");
@@ -276,7 +286,7 @@ public class ManagerPage extends JFrame {
             );
             if (result == JOptionPane.NO_OPTION) { return; }
             if (result == JOptionPane.YES_OPTION){
-                system.removeItem(name);
+                system.removeItem(name, user);
                 loadInventory();
             }
         } catch (Exception e) {
@@ -295,7 +305,7 @@ public class ManagerPage extends JFrame {
             if (result == JOptionPane.NO_OPTION) { return; }
             if (result == JOptionPane.YES_OPTION){
                 if (Double.parseDouble(newPrice.getText()) >= 0.0){
-                    system.updatePrice(name, Double.parseDouble(newPrice.getText()));
+                    system.updatePrice(name, Double.parseDouble(newPrice.getText()), user);
                     JOptionPane.showMessageDialog(null, "New price for " + name + " updated to " + Double.parseDouble(newPrice.getText()));
                     loadInventory();
                 }
@@ -322,7 +332,7 @@ public class ManagerPage extends JFrame {
             if (result == JOptionPane.NO_OPTION) { return; }
             if (result == JOptionPane.YES_OPTION){
                 if (Integer.parseInt(newQuantity.getText()) >= 0){
-                    system.updateQuantity(name, Integer.parseInt(newQuantity.getText()));
+                    system.updateQuantity(name, Integer.parseInt(newQuantity.getText()), user);
                     JOptionPane.showMessageDialog(null, "New quantity for " + name + " updated to " + Integer.parseInt(newQuantity.getText()));
                     loadInventory();
                 }
