@@ -28,7 +28,7 @@ echo ===========================
 
 echo.
 echo [TDD] Compiling Red Test - RealTimeUpdateTest...
-%JAVA%\javac -cp "%OUT%;%LIB%;%TEST_LIBS%" -d %TEST_OUT% test\RealTimeUpdateTest_TDD.java
+%JAVA%\javac -cp "%OUT%;%LIB%;%TEST_LIBS%" -d %TEST_OUT% test\RealTimeUpdateTest.java
 if %ERRORLEVEL% NEQ 0 (
     echo [TDD] RED - InventoryUpdateListener not built yet - this is intentional TDD
 )
