@@ -1,4 +1,4 @@
-# CartPilot — Inventory Management 
+# CartPilot — Inventory Management System
 
 A Java Swing desktop inventory management system built with Java and MySQL for CSCI2040U at Ontario Tech University.
 
@@ -8,34 +8,41 @@ A Java Swing desktop inventory management system built with Java and MySQL for C
 
 - Role-based access control (Owner, Manager, Employee)
 - Graphical UI with Login, Manager, and Employee dashboards
-- Add, remove, update price, and update the quantity of items
+- User registration and authentication with username and password
+- First-time setup — automatically prompts to create owner account on fresh database
+- Add, remove, update price, and update quantity of inventory items
 - Persistent storage via MySQL database
-- Activity log with timestamps also via MySQL database
-- View full inventory from database
+- Activity log with timestamps — every action logged with the user who performed it
+- View full inventory from database in a table
+- All tables auto-created on first launch — no manual SQL required
 
 ---
 
 ## Database Setup
 
-Run the following SQL scripts in MySQL Workbench to set up the required tables:
+The application automatically creates all required tables on first launch. If you prefer to set them up manually, run the following SQL scripts in MySQL Workbench:
 
 ```sql
 CREATE TABLE inventory (
     idinventory INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(255) NULL,
-    price DOUBLE NULL,
-    quantity INT NULL,
-    origin VARCHAR(255) NULL,
+    name VARCHAR(255) NOT NULL,
+    price DOUBLE NOT NULL,
+    quantity INT NOT NULL,
+    origin VARCHAR(255) NOT NULL,
     PRIMARY KEY (idinventory)
 );
-```
 
-```sql
 CREATE TABLE log (
     idlog INT NOT NULL AUTO_INCREMENT,
-    entries VARCHAR(255) NULL,
+    entries VARCHAR(255) NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (idlog)
+);
+
+CREATE TABLE users (
+    username VARCHAR(255) PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(255) NOT NULL
 );
 ```
 
@@ -72,12 +79,13 @@ Hexabyte/
 │   ├── Main.java                       # Entry point — launches GUI
 │   ├── InventorySystem.java            # Business logic and database operations
 │   ├── Item.java                       # Item data model
-│   ├── LoginPage.java                  # Login UI
+│   ├── LoginPage.java                  # Login UI with Register New User support
 │   ├── ManagerPage.java                # Manager/Owner dashboard UI
 │   └── EmployeePage.java               # Employee dashboard UI
 ├── test/
-│   ├── ItemTest.java                   # Unit tests for Item class
-│   └── InventorySystemTest.java        # Unit tests for InventorySystem class
+│   ├── ItemTest.java                   # Unit tests for Item class (9 tests)
+│   ├── InventorySystemTest.java        # Unit tests for InventorySystem class (7 tests)
+│   └── RealTimeUpdateTest.java         # TDD red tests for upcoming feature (5 tests)
 ├── build.bat                           # Build and run script
 ├── build_test.bat                      # Test runner script
 ├── .gitignore
@@ -86,7 +94,7 @@ Hexabyte/
 ├── UML_Diagram.png                     # UML class diagram
 ├── UseCaseUML.png                      # UML sequence diagram
 ├── UseCase_UML                         # PlantUML script for sequence diagram
-└── hexabyte_burndown_chart.png         # burndown chart
+└── hexabyte_burndown_chart.png         # Burndown chart
 ```
 
 ---
@@ -94,15 +102,17 @@ Hexabyte/
 ## How to Setup
 
 1. Download/Clone the repository
-2. Download Workbench from: https://dev.mysql.com/downloads/workbench/
-3. Set up the MySQL database using the scripts above
-4. Update DB credentials in `InventorySystem.java` if needed:
+2. Install MySQL Server and Workbench from: https://dev.mysql.com/downloads/workbench/
+3. Update DB credentials in `InventorySystem.java` if needed:
 
 ```java
 conn = DriverManager.getConnection(
     "jdbc:mysql://127.0.0.1:3306/login", "root", "yourpassword"
 );
 ```
+
+4. Run `build.bat` — tables are created automatically on first launch
+5. On first launch you will be prompted to create an Owner account
 
 ---
 
@@ -162,6 +172,7 @@ C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-
 
 | Feature | Owner | Manager | Employee |
 |---------|-------|---------|----------|
+| Register New User | ✅ | ❌ | ❌ |
 | Add Item | ✅ | ✅ | ❌ |
 | Remove Item | ✅ | ✅ | ❌ |
 | Update Price | ✅ | ✅ | ❌ |
@@ -177,10 +188,21 @@ C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-
 |------------|-------|--------|
 | `ItemTest` | 9 tests — all getters and setters | ✅ Pass |
 | `InventorySystemTest` | 7 tests — all DB methods with mock objects | ✅ Pass |
+| `RealTimeUpdateTest` | 5 tests — TDD red tests for upcoming feature | 🔴 Red (intentional) |
 
 ---
 
+## Known Issues & Planned Fixes
 
+| Issue | Planned Fix |
+|-------|-------------|
+| Passwords stored as plaintext | Add password hashing |
+| No input validation on forms | Add checks for empty/invalid values |
+| No duplicate ID checking | Check existing ID before insert |
+| No item search | Add search by name with SQL LIKE query |
+| No log filtering | Add filter by date or user |
+
+---
 
 ## Authors
 
