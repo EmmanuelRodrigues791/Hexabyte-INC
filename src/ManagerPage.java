@@ -56,6 +56,8 @@ public class ManagerPage extends JFrame {
         scrollPane.setPreferredSize(new Dimension(780, 300));
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
+        System.out.println(role);
+
         // Button panel
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(new Color(30, 30, 30));
@@ -140,11 +142,25 @@ public class ManagerPage extends JFrame {
             if (result == JOptionPane.CANCEL_OPTION) {return;}
                     
             if (result == JOptionPane.OK_OPTION){
-                char[] passChar = passwordInput.getPassword();
-                String addPass = new String(passChar);
-                String roleToAdd = roleInput.getSelectedItem().toString();
-                JOptionPane.showMessageDialog(null, "Login created for: " + usernameInput.getText() + " (" + roleToAdd + ")");
-                system.addUser(usernameInput.getText(), addPass, roleToAdd, user);
+                if (!role.toLowerCase().equals("owner")) { // if manager, they can add employee only
+                    if (roleInput.getSelectedItem().equals("Employee")){ 
+                        char[] passChar = passwordInput.getPassword();
+                        String addPass = new String(passChar);
+                        String roleToAdd = roleInput.getSelectedItem().toString();
+                        JOptionPane.showMessageDialog(null, "Login created for: " + usernameInput.getText() + " (" + roleToAdd + ")");
+                        system.addUser(usernameInput.getText(), addPass, roleToAdd, user);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "You do not have permission to add " + roleInput.getSelectedItem() + " users.");
+                    }
+                }
+                else { // Owner can add anyone
+                    char[] passChar = passwordInput.getPassword();
+                    String addPass = new String(passChar);
+                    String roleToAdd = roleInput.getSelectedItem().toString();
+                    JOptionPane.showMessageDialog(null, "Login created for: " + usernameInput.getText() + " (" + roleToAdd + ")");
+                    system.addUser(usernameInput.getText(), addPass, roleToAdd, user);
+                }
             }   
         });
 
@@ -166,7 +182,19 @@ public class ManagerPage extends JFrame {
             if (result == JOptionPane.CANCEL_OPTION){return;}
             if (result == JOptionPane.OK_OPTION){
                 if (system.loginExist(userRemove.getText())){
-                    system.removeUser(userRemove.getText(), user);
+                    if (role.toLowerCase().equals("manager")){
+                        if ((system.getRole(userRemove.getText()).toLowerCase().equals("employee"))) {
+                            system.removeUser(userRemove.getText(), user);
+                            JOptionPane.showMessageDialog(null, "Successfully removed user " + userRemove.getText() + ".");
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(null, "You do not have permission to remove " + system.getRole(userRemove.getText()) + " users.");
+                        }
+                    }
+                    else {
+                        system.removeUser(userRemove.getText(), user);
+                        JOptionPane.showMessageDialog(null, "Successfully removed user " + userRemove.getText() + ".");
+                    }
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "Login doesn't exist.");
