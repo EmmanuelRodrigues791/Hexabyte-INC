@@ -8,6 +8,21 @@ class InventorySystem {
     public void close() throws SQLException {
         conn.close();
     }
+    // Hash password using SHA-256
+    private String hashPassword(String password) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hash) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return password; // fallback — should never happen
+        }
+    }
     // open connection to database using constructor
     public InventorySystem() throws SQLException {
         conn = DriverManager.getConnection(
@@ -203,7 +218,7 @@ class InventorySystem {
                     "INSERT INTO users (username, password, role) Values (?, ?, ?)"
             );
             preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
+            preparedStatement.setString(2, hashPassword(password));
             preparedStatement.setString(3, role);
 
             preparedStatement.executeUpdate();
@@ -254,15 +269,17 @@ class InventorySystem {
     // If login match return role
     public String login(String username, String password) {
         try {
-            ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM users");
-            while (rs.next()) {
-                if (rs.getString("username").equals(username)){
-                    if (rs.getString("password").equals(password)){
-                        return rs.getString("role");
-                    }
+            PreparedStatement ps = conn.prepareStatement(
+                    "SELECT role, password FROM users WHERE username = ?"
+            );
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String storedHash = rs.getString("password");
+                if (storedHash.equals(hashPassword(password))) { // compare hashes
+                    return rs.getString("role");
                 }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
