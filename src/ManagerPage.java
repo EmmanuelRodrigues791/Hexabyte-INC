@@ -222,7 +222,7 @@ public class ManagerPage extends JFrame {
                         JOptionPane.showMessageDialog(null, "Please select a row.");
                     }
                 }
-                else if (e.getKeyChar() == '\b'){
+                else if (e.getKeyChar() == 'r'){
                     removeBtn.doClick();
                 }
                 else if (e.getKeyChar() == 'p') {
@@ -378,7 +378,7 @@ public class ManagerPage extends JFrame {
     }
 
     private void viewLog() {
-        JTextArea logArea = new JTextArea(20, 50);
+        JTextArea logArea = new JTextArea(30, 70);
         logArea.setEditable(false);
         logArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         logArea.setBackground(new Color(30, 30, 30));
