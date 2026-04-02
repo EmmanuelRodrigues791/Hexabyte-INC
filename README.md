@@ -175,7 +175,7 @@ C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-
 
 | Feature | Owner | Manager | Employee |
 |---------|-------|---------|----------|
-| Register New User | ✅ (employees only) | ✅ | ❌ |
+| Register New User | ✅ | ✅ (employees only) | ❌ |
 | Remove User | ✅ | ✅ (employees only) | ❌ |
 | Add Item | ✅ | ✅ | ❌ |
 | Remove Item | ✅ | ✅ | ❌ |
