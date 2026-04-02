@@ -23,6 +23,36 @@ class InventorySystem {
             return password; // fallback — should never happen
         }
     }
+
+    // Check if item ID already exists
+    public boolean itemIdExists(int id) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                    "SELECT 1 FROM inventory WHERE idinventory = ? LIMIT 1"
+            );
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Search inventory by name
+    public ResultSet searchInventory(String query) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                    "SELECT * FROM inventory WHERE name LIKE ?"
+            );
+            ps.setString(1, "%" + query + "%");
+            return ps.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // open connection to database using constructor
     public InventorySystem() throws SQLException {
         conn = DriverManager.getConnection(

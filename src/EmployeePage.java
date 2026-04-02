@@ -48,7 +48,40 @@ public class EmployeePage extends JFrame {
         table.getTableHeader().setBackground(new Color(100, 180, 255));
         table.getTableHeader().setForeground(Color.WHITE);
         table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
-        mainPanel.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        // Search bar
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.setBackground(new Color(96, 96, 96));
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        JTextField searchField = new JTextField();
+        searchField.setFont(new Font("Arial", Font.PLAIN, 13));
+        searchField.setBackground(new Color(55, 55, 55));
+        searchField.setForeground(Color.WHITE);
+        searchField.setCaretColor(Color.WHITE);
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(100, 180, 255)),
+                BorderFactory.createEmptyBorder(4, 8, 4, 8)
+        ));
+        JLabel searchLabel = new JLabel("  Search: ");
+        searchLabel.setForeground(Color.WHITE);
+        searchLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        searchPanel.add(searchLabel, BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setBackground(new Color(30, 30, 30));
+        centerPanel.add(searchPanel, BorderLayout.NORTH);
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+// Search as you type
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filterTable(searchField.getText()); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filterTable(searchField.getText()); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(searchField.getText()); }
+        });
 
         // Buttons
         JPanel buttonPanel = new JPanel();
@@ -157,6 +190,26 @@ public class EmployeePage extends JFrame {
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
+        }
+    }
+
+    // query db for matching items
+    private void filterTable(String query) {
+        tableModel.setRowCount(0);
+        try {
+            java.sql.ResultSet rs = system.searchInventory(query);
+            if (rs == null) return;
+            while (rs.next()) {
+                tableModel.addRow(new Object[]{
+                        rs.getInt("idinventory"),
+                        rs.getString("name"),
+                        rs.getFloat("price"),
+                        rs.getInt("quantity"),
+                        rs.getString("origin")
+                });
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error searching inventory: " + e.getMessage());
         }
     }
 }

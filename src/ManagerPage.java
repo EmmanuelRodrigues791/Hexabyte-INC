@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
@@ -29,11 +30,11 @@ public class ManagerPage extends JFrame {
 
         // Header
         JPanel header = new JPanel();
-        header.setBackground(new Color(20, 20, 20));
+        header.setBackground(new Color(105, 169, 214));
         header.setPreferredSize(new Dimension(800, 60));
-        JLabel headerLabel = new JLabel("CartPilot  |  " + role.toUpperCase() + " DASHBOARD");
+        JLabel headerLabel = new JLabel("CARTPILOT  |  " + role.toUpperCase() + " DASHBOARD");
         headerLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        headerLabel.setForeground(new Color(100, 180, 255));
+        headerLabel.setForeground(new Color(255, 255, 255));
         header.add(headerLabel);
         mainPanel.add(header, BorderLayout.NORTH);
 
@@ -45,17 +46,58 @@ public class ManagerPage extends JFrame {
         table = new JTable(tableModel);
         table.setFont(new Font("Arial", Font.PLAIN, 13));
         table.setRowHeight(25);
-        table.setBackground(new Color(45, 45, 45));
-        table.setForeground(Color.WHITE);
+        table.setBackground(new Color(197, 196, 196));
+        table.setForeground(Color.BLACK);
         table.setGridColor(new Color(60, 60, 60));
-        table.getTableHeader().setBackground(new Color(100, 180, 255));
+        table.getTableHeader().setBackground(new Color(127, 178, 214));
         table.getTableHeader().setForeground(Color.WHITE);
         table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+                return this;
+            }
+        };
+        table.setDefaultRenderer(Object.class, renderer);
         
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(780, 300));
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
+        // Search bar
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.setBackground(new Color(255, 255, 255));
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        JTextField searchField = new JTextField();
+        searchField.setFont(new Font("Arial", Font.PLAIN, 13));
+        searchField.setBackground(new Color(184, 184, 184));
+        searchField.setForeground(Color.WHITE);
+        searchField.setCaretColor(Color.WHITE);
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(255, 255, 255)),
+                BorderFactory.createEmptyBorder(4, 8, 4, 8)
+        ));
+        JLabel searchLabel = new JLabel("  SEARCH: ");
+        searchLabel.setForeground(Color.BLACK);
+        searchLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        searchPanel.add(searchLabel, BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setBackground(new Color(250, 247, 247));
+        centerPanel.add(searchPanel, BorderLayout.NORTH);
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+        // Search as you type
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filterTable(searchField.getText()); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filterTable(searchField.getText()); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(searchField.getText()); }
+        });
         System.out.println(role);
 
         // Button panel
@@ -324,6 +366,13 @@ public class ManagerPage extends JFrame {
                     JOptionPane.showMessageDialog(this, "Quantity cannot be negative.");
                     return;
                 }
+
+                // duplicate ID check
+                if (system.itemIdExists(id)) {
+                    JOptionPane.showMessageDialog(this, "Item ID " + id + " already exists. Please use a different ID.");
+                    return;
+                }
+
                 system.addItem(id, name, price, quantity, origin, user);
                 loadInventory();
                 JOptionPane.showMessageDialog(this, "Item added successfully!");
@@ -450,5 +499,25 @@ public class ManagerPage extends JFrame {
         JOptionPane.showMessageDialog(this,
                 new JScrollPane(logArea), "Activity Log",
                 JOptionPane.PLAIN_MESSAGE);
+    }
+
+    // query db for matching grocery items
+    private void filterTable(String query) {
+        tableModel.setRowCount(0);
+        try {
+            java.sql.ResultSet rs = system.searchInventory(query);
+            if (rs == null) return;
+            while (rs.next()) {
+                tableModel.addRow(new Object[]{
+                        rs.getInt("idinventory"),
+                        rs.getString("name"),
+                        rs.getFloat("price"),
+                        rs.getInt("quantity"),
+                        rs.getString("origin")
+                });
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error searching inventory: " + e.getMessage());
+        }
     }
 }
