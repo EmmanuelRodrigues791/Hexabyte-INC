@@ -13,7 +13,9 @@ A Java Swing desktop inventory management system built with Java and MySQL for C
 - Add, remove, update price, and update quantity of inventory items
 - Persistent storage via MySQL database
 - Activity log with timestamps — every action logged with the user who performed it
+- Ability to clear the log
 - View full inventory from database in a table
+- Ability to search items by name
 - All tables auto-created on first launch — no manual SQL required
 
 ---
@@ -173,12 +175,16 @@ C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-
 | Feature | Owner | Manager | Employee |
 |---------|-------|---------|----------|
 | Register New User | ✅ | ✅ | ❌ |
+| Remove User | ✅ | ✅ | ❌ |
 | Add Item | ✅ | ✅ | ❌ |
 | Remove Item | ✅ | ✅ | ❌ |
 | Update Price | ✅ | ✅ | ❌ |
 | Update Quantity | ✅ | ✅ | ✅ |
 | View Inventory | ✅ | ✅ | ✅ |
 | View Log | ✅ | ✅ | ❌ |
+| Clear Log | ✅ | ✅ | ❌ |
+
+
 
 ---
 
@@ -192,17 +198,7 @@ C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-
 
 ---
 
-## Known Issues & Planned Fixes
 
-| Issue | Planned Fix |
-|-------|-------------|
-| Passwords stored as plaintext | Add password hashing |
-| No input validation on forms | Add checks for empty/invalid values |
-| No duplicate ID checking | Check existing ID before insert |
-| No item search | Add search by name with SQL LIKE query |
-| No log filtering | Add filter by date or user |
-
----
 
 ## Authors
 
