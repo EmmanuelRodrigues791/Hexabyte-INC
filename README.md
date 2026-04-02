@@ -184,8 +184,7 @@ C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-
 | View Log | ✅ | ✅ | ❌ |
 | Clear Log | ✅ | ✅ | ❌ |
 
-* Note:
-* Managers cannot add/remove the owner or other managers, onnly employees
+* Note: Managers cannot add/remove the owner or other managers, onnly employees
 
 ---
 
