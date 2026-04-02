@@ -5,6 +5,7 @@ import java.awt.*;
 import java.sql.SQLException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.Statement;
 
 public class ManagerPage extends JFrame {
 
@@ -20,7 +21,7 @@ public class ManagerPage extends JFrame {
         this.user = user;
 
         setTitle("CartPilot - " + role.substring(0,1).toUpperCase() + role.substring(1) + " Dashboard");
-        setSize(1100, 800);
+        setSize(1200, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -111,6 +112,7 @@ public class ManagerPage extends JFrame {
         JButton updateQtyBtn = createButton("Update Quantity", new Color(70, 130, 200));
         JButton refreshBtn = createButton("Refresh", new Color(100, 100, 100));
         JButton logBtn = createButton("View Log", new Color(150, 100, 200));
+        JButton clearLogBtn = createButton("Clear Log", new Color(207, 163, 250));
         JButton logoutBtn = createButton("Logout", new Color(80, 80, 80));
 
         buttonPanel.add(addBtn);
@@ -119,6 +121,7 @@ public class ManagerPage extends JFrame {
         buttonPanel.add(updateQtyBtn);
         buttonPanel.add(refreshBtn);
         buttonPanel.add(logBtn);
+        buttonPanel.add(clearLogBtn);
         buttonPanel.add(logoutBtn);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -131,6 +134,7 @@ public class ManagerPage extends JFrame {
         updateQtyBtn.addActionListener(e -> updateQuantity());
         refreshBtn.addActionListener(e -> loadInventory());
         logBtn.addActionListener(e -> viewLog());
+        clearLogBtn.addActionListener(e -> clearLog());
         logoutBtn.addActionListener(e -> {
             dispose();
             new LoginPage().setVisible(true);
@@ -499,6 +503,27 @@ public class ManagerPage extends JFrame {
         JOptionPane.showMessageDialog(this,
                 new JScrollPane(logArea), "Activity Log",
                 JOptionPane.PLAIN_MESSAGE);
+    }
+    private void clearLog (){
+        int result = JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to completely clear the log?", "Clear Activity Log",
+                JOptionPane.YES_NO_OPTION);
+
+        if (result == JOptionPane.YES_OPTION) {
+
+            // clear log
+            try {
+                Statement stmt = system.getConnection().createStatement();
+                String sql = "TRUNCATE TABLE log";
+                stmt.executeUpdate(sql);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            JOptionPane.showMessageDialog(this, "The log is now cleared.");
+        } else {
+            JOptionPane.showMessageDialog(this, "The log is not changed.");
+        }
     }
 
     // query db for matching grocery items
