@@ -9,6 +9,7 @@ A Java Swing desktop inventory management system built with Java and MySQL for C
 - Role-based access control (Owner, Manager, Employee)
 - Graphical UI with Login, Manager, and Employee dashboards
 - User registration and authentication with username and password
+- Passwords are hashed before being stored in the database to protect against database breaches
 - First-time setup — automatically prompts to create owner account on fresh database
 - Add, remove, update price, and update quantity of inventory items
 - Persistent storage via MySQL database
@@ -174,17 +175,18 @@ C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-
 
 | Feature | Owner | Manager | Employee |
 |---------|-------|---------|----------|
-| Register New User | ✅ | ✅ | ❌ |
-| Remove User | ✅ | ✅ | ❌ |
+| Register New User | ✅ (employees only) | ✅ | ❌ |
+| Remove User | ✅ | ✅ (employees only) | ❌ |
 | Add Item | ✅ | ✅ | ❌ |
 | Remove Item | ✅ | ✅ | ❌ |
 | Update Price | ✅ | ✅ | ❌ |
 | Update Quantity | ✅ | ✅ | ✅ |
 | View Inventory | ✅ | ✅ | ✅ |
+| Search Inventory | ✅ | ✅ | ✅ |
 | View Log | ✅ | ✅ | ❌ |
 | Clear Log | ✅ | ✅ | ❌ |
 
-* Note: Managers cannot add/remove the owner or other managers, only employees
+
 
 ---
 
