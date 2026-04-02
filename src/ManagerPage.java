@@ -140,28 +140,40 @@ public class ManagerPage extends JFrame {
             );
 
             if (result == JOptionPane.CANCEL_OPTION) {return;}
-                    
-            if (result == JOptionPane.OK_OPTION){
-                if (!role.toLowerCase().equals("owner")) { // if manager, they can add employee only
-                    if (roleInput.getSelectedItem().equals("Employee")){ 
-                        char[] passChar = passwordInput.getPassword();
-                        String addPass = new String(passChar);
-                        String roleToAdd = roleInput.getSelectedItem().toString();
-                        JOptionPane.showMessageDialog(null, "Login created for: " + usernameInput.getText() + " (" + roleToAdd + ")");
-                        system.addUser(usernameInput.getText(), addPass, roleToAdd, user);
-                    }
-                    else {
-                        JOptionPane.showMessageDialog(null, "You do not have permission to add " + roleInput.getSelectedItem() + " users.");
-                    }
+
+            if (result == JOptionPane.OK_OPTION) {
+                String uname = usernameInput.getText().trim();
+                char[] passChar = passwordInput.getPassword();
+                String addPass = new String(passChar);
+                String roleToAdd = roleInput.getSelectedItem().toString();
+
+                // field validation
+                if (uname.isEmpty() || addPass.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Username and password cannot be empty.");
+                    return;
                 }
-                else { // Owner can add anyone
-                    char[] passChar = passwordInput.getPassword();
-                    String addPass = new String(passChar);
-                    String roleToAdd = roleInput.getSelectedItem().toString();
-                    JOptionPane.showMessageDialog(null, "Login created for: " + usernameInput.getText() + " (" + roleToAdd + ")");
-                    system.addUser(usernameInput.getText(), addPass, roleToAdd, user);
+                // 4 or more check for passwords
+                if (addPass.length() < 4) {
+                    JOptionPane.showMessageDialog(null, "Password must be at least 4 characters.");
+                    return;
                 }
-            }   
+                if (system.loginExist(uname)) {
+                    JOptionPane.showMessageDialog(null, "Username '" + uname + "' already exists.");
+                    return;
+                }
+
+                if (!role.toLowerCase().equals("owner")) { // Manager can only add employees
+                    if (roleToAdd.equals("Employee")) {
+                        system.addUser(uname, addPass, roleToAdd, user);
+                        JOptionPane.showMessageDialog(null, "Login created for: " + uname + " (" + roleToAdd + ")");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "You do not have permission to add " + roleToAdd + " users.");
+                    }
+                } else { // Owner can add anyone
+                    system.addUser(uname, addPass, roleToAdd, user);
+                    JOptionPane.showMessageDialog(null, "Login created for: " + uname + " (" + roleToAdd + ")");
+                }
+            }
         });
 
         // Pop up to remove users from database with role awareness
@@ -284,18 +296,43 @@ public class ManagerPage extends JFrame {
 
         int result = JOptionPane.showConfirmDialog(this, fields, "Add Item", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
+            String name = nameField.getText().trim();
+            String origin = originField.getText().trim();
+
+            // Empty field checks
+            if (idField.getText().trim().isEmpty() || name.isEmpty() ||
+                    priceField.getText().trim().isEmpty() || qtyField.getText().trim().isEmpty() ||
+                    origin.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All fields are required.");
+                return;
+            }
             try {
-                system.addItem(
-                        Integer.parseInt(idField.getText()),
-                        nameField.getText(),
-                        Double.parseDouble(priceField.getText()),
-                        Integer.parseInt(qtyField.getText()),
-                        originField.getText(),
-                        user
-                );
+                int id =  Integer.parseInt(idField.getText().trim());
+                double price = Double.parseDouble(priceField.getText().trim());
+                int quantity = Integer.parseInt(qtyField.getText().trim());
+
+                // negative value checks
+                if (id <= 0) {
+                    JOptionPane.showMessageDialog(this, "Item ID must be greater than 0.");
+                    return;
+                }
+                if (price < 0) {
+                    JOptionPane.showMessageDialog(this, "Price cannot be negative.");
+                    return;
+                }
+                if (quantity < 0) {
+                    JOptionPane.showMessageDialog(this, "Quantity cannot be negative.");
+                    return;
+                }
+                system.addItem(id, name, price, quantity, origin, user);
                 loadInventory();
                 JOptionPane.showMessageDialog(this, "Item added successfully!");
-            } catch (Exception e) {
+
+            }
+            catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "ID and Quantity must be whole numbers. Price must be a number.");
+            }
+            catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
             }
         }
@@ -326,26 +363,32 @@ public class ManagerPage extends JFrame {
         try {
             String name = (String) table.getValueAt(table.getSelectedRow(), 1);
             JTextField newPrice = new JTextField();
-            Object[] fields = {
-                    "New Price for " + name + ":", newPrice
-            };
+            Object[] fields = { "New Price for " + name + ":", newPrice };
+
             int result = JOptionPane.showConfirmDialog(this, fields, "Update Price", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.NO_OPTION) { return; }
-            if (result == JOptionPane.YES_OPTION){
-                if (Double.parseDouble(newPrice.getText()) >= 0.0){
-                    system.updatePrice(name, Double.parseDouble(newPrice.getText()), user);
-                    JOptionPane.showMessageDialog(null, "New price for " + name + " updated to " + Double.parseDouble(newPrice.getText()));
-                    loadInventory();
-                }
-                else {
-                    JOptionPane.showMessageDialog(null, "Price cannot be less than 0.0");
-                }
+            if (result != JOptionPane.OK_OPTION) { return; }
+
+            // Empty check
+            if (newPrice.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Price cannot be empty.");
+                return;
             }
-        } catch (NumberFormatException nfe){
-            JOptionPane.showMessageDialog(null, "Error: Please enter a valid price.");
-        }
-        catch (Exception er) {
-            JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
+
+            // negative price check
+            double price = Double.parseDouble(newPrice.getText().trim());
+            if (price < 0) {
+                JOptionPane.showMessageDialog(null, "Price cannot be negative.");
+                return;
+            }
+
+            system.updatePrice(name, price, user);
+            JOptionPane.showMessageDialog(null, "Price for " + name + " updated to " + price);
+            loadInventory();
+
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid number for price.");
+        } catch (Exception er) {
+            JOptionPane.showMessageDialog(null, "Please select a row.");
         }
     }
 
@@ -353,27 +396,31 @@ public class ManagerPage extends JFrame {
         try {
             String name = (String) table.getValueAt(table.getSelectedRow(), 1);
             JTextField newQuantity = new JTextField();
-            Object[] fields = {
-                    "New Quantity for " + name + ":", newQuantity
-            };
+            Object[] fields = { "New Quantity for " + name + ":", newQuantity };
+
             int result = JOptionPane.showConfirmDialog(this, fields, "Update Quantity", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.NO_OPTION) { return; }
-            if (result == JOptionPane.YES_OPTION){
-                if (Integer.parseInt(newQuantity.getText()) >= 0){
-                    system.updateQuantity(name, Integer.parseInt(newQuantity.getText()), user);
-                    JOptionPane.showMessageDialog(null, "New quantity for " + name + " updated to " + Integer.parseInt(newQuantity.getText()));
-                    loadInventory();
-                }
-                else {
-                    JOptionPane.showMessageDialog(null, "Quantity cannot be less than 0.0");
-                }
+            if (result != JOptionPane.OK_OPTION) { return; }
+
+            // Empty check
+            if (newQuantity.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Quantity cannot be empty.");
+                return;
             }
-        } 
-        catch (NumberFormatException nfe) {
-            JOptionPane.showMessageDialog(null, "Error: Please enter a valid quantity.");
-        }
-        catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please select the row you would like to update.");
+            // qty negative check
+            int qty = Integer.parseInt(newQuantity.getText().trim());
+            if (qty < 0) {
+                JOptionPane.showMessageDialog(null, "Quantity cannot be negative.");
+                return;
+            }
+
+            system.updateQuantity(name, qty, user);
+            JOptionPane.showMessageDialog(null, "Quantity for " + name + " updated to " + qty);
+            loadInventory();
+
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid whole number for quantity.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Please select a row.");
         }
     }
 

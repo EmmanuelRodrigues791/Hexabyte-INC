@@ -107,8 +107,15 @@ public class LoginPage extends JFrame {
 
         // Login action
         loginBtn.addActionListener(e -> {
-            String user = username.getText();
+            String user = username.getText().trim();
             String pass = new String(password.getPassword());
+
+            // username and password field check
+            if (user.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please enter both username and password.");
+                return;
+            }
+
             String role = system.login(user, pass);
             if (role == null) {
                 JOptionPane.showMessageDialog(null, "Invalid username or password.");
@@ -175,7 +182,21 @@ public class LoginPage extends JFrame {
                 "No users found — Create Owner Account", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.CANCEL_OPTION) System.exit(0);
         if (result == JOptionPane.OK_OPTION) {
-            system.addUser(idField.getText(), new String(passField.getPassword()), "Owner", "System");
+            String username = idField.getText().trim();
+            String userpassword = new String(passField.getPassword());
+
+            // empty field check
+            if (username.isEmpty() || userpassword.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Username and password must both be filled.");
+                createFirstOwner(); // re-show the dialog
+                return;
+            }
+            if (userpassword.length() < 4) {
+                JOptionPane.showMessageDialog(this, "Password must be at least 4 characters.");
+                createFirstOwner(); // re-show the dialog
+                return;
+            }
+            system.addUser(username, userpassword, "Owner", "System");
         }
     }
 
