@@ -20,7 +20,8 @@ class InventorySystem {
             return sb.toString();
         } catch (java.security.NoSuchAlgorithmException e) {
             e.printStackTrace();
-            return password; // fallback — should never happen
+            throw new RuntimeException("Hashing algorithm not found");
+
         }
     }
 
