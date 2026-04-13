@@ -196,7 +196,7 @@ C:\Users\your user\.jdks\openjdk-25.0.2\bin\java -cp "out;lib\mysql-connector-j-
 |------------|-------|--------|
 | `ItemTest` | 9 tests — all getters and setters | ✅ Pass |
 | `InventorySystemTest` | 7 tests — all DB methods with mock objects | ✅ Pass |
-| `RealTimeUpdateTest` | 5 tests — TDD red tests for upcoming feature | 🔴 Red (intentional) |
+
 
 ---
 
